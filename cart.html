@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Place Your Order</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{box-sizing:border-box;font-family:'Poppins',sans-serif;margin:0;padding:0}
+
+body{
+  min-height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  background:linear-gradient(145deg,#89f7fe,#66a6ff);
+  padding:40px 10px;
+}
+
+.container{
+  width:100%;
+  max-width:700px;
+  background:#fff;
+  border-radius:20px;
+  box-shadow:0 25px 50px rgba(0,0,0,0.15);
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:25px;
+}
+
+h2{text-align:center;color:#222;margin-bottom:8px;font-weight:600}
+p{text-align:center;font-size:14px;color:#555}
+
+.cart-items{
+  border:1px solid #ccc;
+  border-radius:15px;
+  padding:15px;
+  max-height:250px;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+.cart-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:#f9f9f9;
+  padding:8px 12px;
+  border-radius:12px;
+  gap:10px;
+}
+
+.cart-item img{
+  width:60px;
+  height:50px;
+  object-fit:cover;
+  border-radius:8px;
+}
+
+.cart-item .info{
+  flex:1;
+}
+
+.cart-item .info h4{
+  font-size:14px;
+  margin-bottom:4px;
+  font-weight:500;
+}
+
+.cart-item .info .price{
+  font-size:13px;
+  color:#27ae60;
+  font-weight:600;
+}
+
+.cart-item button{
+  background:red;
+  border:none;
+  color:#fff;
+  border-radius:50%;
+  width:22px;
+  height:22px;
+  font-size:14px;
+  cursor:pointer;
+}
+
+.form-section{
+  display:flex;
+  flex-direction:column;
+  gap:15px;
+}
+
+label{font-size:13px;color:#444;display:block}
+input, textarea{
+  width:100%;
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #ccc;
+  font-size:14px;
+  outline:none;
+  background:#f1f1f1;
+  cursor:not-allowed;
+}
+
+textarea{resize:none;min-height:60px}
+
+button.order-btn{
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(135deg,#667eea,#764ba2);
+  color:#fff;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.3s;
+}
+button.order-btn:hover{background:linear-gradient(135deg,#764ba2,#667eea)}
+
+.error{color:red;text-align:center;font-size:13px;margin-bottom:12px}
+
+.total-amount{
+  text-align:right;
+  font-weight:600;
+  font-size:16px;
+  color:#222;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Customer Order Form</h2>
+  <p>Review items and fill your details below</p>
+
+  <div id="cartContainer" class="cart-items"></div>
+  <div class="total-amount">Total: PKR <span id="totalAmount">0</span></div>
+
+  <div id="error" class="error"></div>
+
+  <div class="form-section">
+    <label>Name</label>
+    <input id="customerName" placeholder="Full Name">
+
+    <label>Phone</label>
+    <input id="customerNumber" placeholder="03xxxxxxxxx">
+
+    <label>Address</label>
+    <input id="customerAddress" placeholder="Complete Address">
+
+    <button class="order-btn" onclick="sendOrder()">Order Now</button>
+  </div>
+</div>
+
+<script>
+// ===== LOAD CART ITEMS =====
+let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+const cartContainer = document.getElementById('cartContainer');
+const totalAmountEl = document.getElementById('totalAmount');
+
+function renderCart(){
+  cartContainer.innerHTML = '';
+  let total = 0;
+
+  cart.forEach((item,index)=>{
+    const div = document.createElement('div');
+    div.className = 'cart-item';
+    div.innerHTML = `
+      <img src="${item.img}">
+      <div class="info">
+        <h4>${item.title}</h4>
+        <div class="price">${item.price}</div>
+      </div>
+      <button onclick="removeItem(${index})">×</button>
+    `;
+    cartContainer.appendChild(div);
+
+    let priceNum = parseInt(item.price.replace(/[^0-9]/g,''));
+    total += priceNum;
+  });
+
+  totalAmountEl.innerText = total;
+}
+
+function removeItem(index){
+  cart.splice(index,1);
+  localStorage.setItem('cart',JSON.stringify(cart));
+  renderCart();
+}
+
+renderCart();
+
+// ===== ORDER FORM =====
+const allowedSellers = [
+  'hussnainamjad307@gmail.com',
+  'hussnainamjad2007@gmail.com',
+  'seller3@gmail.com'
+];
+
+const params = new URLSearchParams(window.location.search);
+const sellerEmail = params.get('seller');
+
+const errorBox = document.getElementById('error');
+
+if (!allowedSellers.includes(sellerEmail)) {
+  errorBox.innerText = 'Invalid seller link. Please contact seller.';
+}
+
+function sendOrder(){
+  if (!allowedSellers.includes(sellerEmail)) return;
+
+  const name = document.getElementById('customerName').value.trim();
+  const phone = document.getElementById('customerNumber').value.trim();
+  const address = document.getElementById('customerAddress').value.trim();
+
+  if(!name || !phone || !address || cart.length===0){
+    errorBox.innerText = 'Please fill all fields and ensure cart is not empty';
+    return;
+  }
+
+  if(!/^03[0-9]{9}$/.test(phone)){
+    errorBox.innerText = 'Invalid phone number';
+    return;
+  }
+
+  const itemsVal = cart.map(p=>`${p.title} - ${p.price}`).join("\n");
+  const amountVal = cart.reduce((sum,p)=>sum + parseInt(p.price.replace(/[^0-9]/g,'')),0);
+
+  const form = document.createElement('form');
+  form.action = `https://formsubmit.co/${sellerEmail}`;
+  form.method = 'POST';
+
+  form.innerHTML = `
+    <input type="hidden" name="Name" value="${name}">
+    <input type="hidden" name="Phone" value="${phone}">
+    <input type="hidden" name="Address" value="${address}">
+    <input type="hidden" name="Items" value="${itemsVal}">
+    <input type="hidden" name="Amount (PKR)" value="${amountVal}">
+    <input type="hidden" name="_captcha" value="false">
+  `;
+
+  document.body.appendChild(form);
+  form.submit();
+}
+</script>
+
+</body>
+</html>

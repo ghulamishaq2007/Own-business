@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>My Ecommerce</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial;background:#f4f6f8}
+
+/* ===== NAVBAR ===== */
+.navbar{
+  background:#111;color:#fff;
+  padding:15px 25px;
+  display:flex;justify-content:space-between;align-items:center
+}
+.logo{font-size:22px;font-weight:bold}
+.cart a{color:#fff;font-size:22px;text-decoration:none}
+
+/* ===== BANNER ===== */
+.banner{
+  height:260px;
+  background:url("https://picsum.photos/1200/400") center/cover no-repeat;
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:32px;font-weight:bold
+}
+
+/* ===== CATEGORY ===== */
+.category{
+  padding:20px;background:#fff
+}
+select{
+  padding:8px 12px;font-size:16px
+}
+
+/* ===== SECTION ===== */
+.section{padding:25px;display:none} /* initially hide all sections */
+.section.active{display:block}
+.section h2{margin-bottom:15px}
+
+/* ===== SLIDER ===== */
+.slider-wrap{position:relative}
+.products{
+  display:flex;gap:18px;
+  overflow-x:auto;scroll-behavior:smooth
+}
+.products::-webkit-scrollbar{display:none}
+
+/* ===== CARD ===== */
+.card{
+  min-width:220px;
+  background:#fff;
+  border-radius:12px;
+  box-shadow:0 6px 14px rgba(0,0,0,.12);
+  overflow:hidden;
+  position:relative
+}
+.card img{width:100%;height:150px;object-fit:cover}
+.card-body{padding:12px}
+.card-body h4{font-size:16px;margin-bottom:5px}
+.price{color:#27ae60;font-weight:bold}
+.old{font-size:13px;color:#888;text-decoration:line-through}
+.btn{
+  margin-top:8px;
+  width:100%;padding:8px;
+  background:#2ecc71;color:#fff;
+  border:none;border-radius:8px;cursor:pointer
+}
+
+/* ===== OFF TAG ===== */
+.off{
+  position:absolute;
+  top:10px;left:10px;
+  background:red;color:#fff;
+  padding:4px 7px;
+  font-size:12px;border-radius:5px
+}
+
+/* ===== ARROWS ===== */
+.arrow{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:45px;
+  height:45px;
+  background:#fff;
+  color:#111;
+  border:none;
+  border-radius:50%;
+  cursor:pointer;
+  font-size:20px;
+  box-shadow:0 4px 12px rgba(0,0,0,.25);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:10;
+  transition:.3s;
+}
+
+.arrow:hover{
+  background:#111;
+  color:#fff;
+}
+
+.arrow.left{
+  left:10px;
+}
+
+.arrow.right{
+  right:10px;
+}
+
+/* ===== FOOTER ===== */
+footer{
+  background:#111;color:#ccc;
+  padding:40px 20px;margin-top:40px
+}
+.footer-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:20px
+}
+footer h3{color:#fff;margin-bottom:10px}
+footer a{color:#bbb;text-decoration:none;display:block;margin:6px 0}
+.copy{text-align:center;margin-top:20px;color:#777}
+
+@media(max-width:600px){
+.banner{font-size:22px;height:180px}
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="logo">My Company</div>
+  <div class="cart">
+    <a href="cart.html">🛒</a>
+  </div>
+</div>
+
+<!-- BANNER -->
+<div class="banner">
+  Big Sale – Up to 50% OFF
+</div>
+
+<!-- CATEGORY -->
+<div class="category">
+  <label><b>Select Category:</b></label>
+  <select id="categorySelect">
+    <option value="Mobiles">Electronics</option>
+    <option value="Laptops">Laptops</option>
+    <option value="Jacket">Jacket</option>
+    <option value="Home">Home</option>
+  </select>
+</div>
+
+<!-- MOBILES -->
+<div class="section" data-category="Mobiles">
+<h2>Mobiles</h2>
+<div class="slider-wrap">
+<button class="arrow left" onclick="slide(this,-1)">❮</button>
+<div class="products">
+
+<div class="card">
+  <div class="off">50% OFF</div>
+  <img src="https://picsum.photos/300/200?1">
+  <div class="card-body">
+    <h4>Mobile 1</h4>
+    <div class="old">PKR 2000</div>
+    <div class="price">PKR 1000</div>
+    <button class="btn">Add to Cart</button>
+  </div>
+</div>
+
+<div class="card">
+  <img src="https://picsum.photos/300/200?2">
+  <div class="card-body">
+    <h4>Mobile 2</h4>
+    <div class="price">PKR 1500</div>
+    <button class="btn">Add to Cart</button>
+  </div>
+</div>
+
+</div>
+<button class="arrow right" onclick="slide(this,1)">❯</button>
+</div>
+</div>
+
+<!-- LAPTOPS -->
+<div class="section" data-category="Laptops">
+<h2>Laptops</h2>
+<div class="slider-wrap">
+<button class="arrow left" onclick="slide(this,-1)">❮</button>
+<div class="products">
+
+<div class="card">
+  <div class="off">50% OFF</div>
+  <img src="https://picsum.photos/300/200?3">
+  <div class="card-body">
+    <h4>Laptop 1</h4>
+    <div class="old">PKR 120000</div>
+    <div class="price">PKR 60000</div>
+    <button class="btn">Add to Cart</button>
+  </div>
+</div>
+
+<div class="card">
+  <img src="https://picsum.photos/300/200?4">
+  <div class="card-body">
+    <h4>Laptop 2</h4>
+    <div class="price">PKR 90000</div>
+    <button class="btn">Add to Cart</button>
+  </div>
+</div>
+
+</div>
+<button class="arrow right" onclick="slide(this,1)">❯</button>
+</div>
+</div>
+
+
+
+
+
+
+
+
+<div class="section" data-category="Jacket">
+<h2>Jacket</h2>
+<div class="slider-wrap">
+<button class="arrow left" onclick="slide(this,-1)">❮</button>
+<div class="products">
+
+<div class="card">
+  <div class="off">50% OFF</div>
+  <img src="https://picsum.photos/300/200?3">
+  <div class="card-body">
+    <h4>Laptop 1</h4>
+    <div class="old">PKR 120000</div>
+    <div class="price">PKR 60000</div>
+    <button class="btn">Add to Cart</button>
+  </div>
+</div>
+
+<div class="card">
+  <img src="https://picsum.photos/300/200?4">
+  <div class="card-body">
+    <h4>Laptop 2</h4>
+    <div class="price">PKR 90000</div>
+    <button class="btn">Add to Cart</button>
+  </div>
+</div>
+
+</div>
+<button class="arrow right" onclick="slide(this,1)">❯</button>
+</div>
+</div>
+
+
+
+
+
+
+
+
+<!-- FOOTER -->
+<footer>
+<div class="footer-grid">
+  <div>
+    <h3>About</h3>
+    <p>Modern ecommerce website with best prices.</p>
+  </div>
+  <div>
+    <h3>Links</h3>
+    <a href="#">Home</a>
+    <a href="#">Shop</a>
+    <a href="#">Contact</a>
+  </div>
+  <div>
+    <h3>Support</h3>
+    <a href="#">FAQ</a>
+    <a href="#">Privacy</a>
+  </div>
+</div>
+<div class="copy">© 2025 My Company</div>
+</footer>
+
+<script>
+function slide(btn,dir){
+  btn.parentElement.querySelector(".products")
+  .scrollBy({left:dir*800,behavior:"smooth"});
+}
+
+// ===== CATEGORY FILTER =====
+const categorySelect = document.getElementById('categorySelect');
+const sections = document.querySelectorAll('.section');
+
+function showCategory(category){
+  sections.forEach(sec=>{
+    if(sec.dataset.category === category){
+      sec.classList.add('active');
+    } else {
+      sec.classList.remove('active');
+    }
+  });
+}
+
+// Initial display
+showCategory(categorySelect.value);
+
+// On change
+categorySelect.addEventListener('change',()=>{
+  showCategory(categorySelect.value);
+});
+</script>
+
+
+<script>
+// ===== ADD TO CART FUNCTIONALITY =====
+const addToCartButtons = document.querySelectorAll('.btn');
+
+addToCartButtons.forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const card = btn.closest('.card');
+    const product = {
+      title: card.querySelector('h4').innerText,
+      price: card.querySelector('.price').innerText,
+      img: card.querySelector('img').src
+    };
+
+    // Get existing cart or empty array
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+    // Add new product
+    cart.push(product);
+
+    // Save back to localStorage
+    localStorage.setItem('cart', JSON.stringify(cart));
+
+    alert(product.title + " added to cart!");
+  });
+});
+</script>
+
+
+</body>
+</html>
