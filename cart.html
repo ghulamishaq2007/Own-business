@@ -9,7 +9,6 @@
 
 <style>
 *{box-sizing:border-box;font-family:'Poppins',sans-serif;margin:0;padding:0}
-
 body{
   min-height:100vh;
   display:flex;
@@ -18,7 +17,6 @@ body{
   background:linear-gradient(145deg,#89f7fe,#66a6ff);
   padding:40px 10px;
 }
-
 .container{
   width:100%;
   max-width:700px;
@@ -30,10 +28,8 @@ body{
   flex-direction:column;
   gap:25px;
 }
-
 h2{text-align:center;color:#222;margin-bottom:8px;font-weight:600}
 p{text-align:center;font-size:14px;color:#555}
-
 .cart-items{
   border:1px solid #ccc;
   border-radius:15px;
@@ -44,7 +40,6 @@ p{text-align:center;font-size:14px;color:#555}
   flex-direction:column;
   gap:12px;
 }
-
 .cart-item{
   display:flex;
   align-items:center;
@@ -54,30 +49,25 @@ p{text-align:center;font-size:14px;color:#555}
   border-radius:12px;
   gap:10px;
 }
-
 .cart-item img{
   width:60px;
   height:50px;
   object-fit:cover;
   border-radius:8px;
 }
-
 .cart-item .info{
   flex:1;
 }
-
 .cart-item .info h4{
   font-size:14px;
   margin-bottom:4px;
   font-weight:500;
 }
-
 .cart-item .info .price{
   font-size:13px;
   color:#27ae60;
   font-weight:600;
 }
-
 .cart-item button{
   background:red;
   border:none;
@@ -88,13 +78,11 @@ p{text-align:center;font-size:14px;color:#555}
   font-size:14px;
   cursor:pointer;
 }
-
 .form-section{
   display:flex;
   flex-direction:column;
   gap:15px;
 }
-
 label{font-size:13px;color:#444;display:block}
 input, textarea{
   width:100%;
@@ -104,11 +92,8 @@ input, textarea{
   font-size:14px;
   outline:none;
   background:#f1f1f1;
-  cursor:not-allowed;
 }
-
 textarea{resize:none;min-height:60px}
-
 button.order-btn{
   width:100%;
   padding:14px;
@@ -121,9 +106,7 @@ button.order-btn{
   transition:0.3s;
 }
 button.order-btn:hover{background:linear-gradient(135deg,#764ba2,#667eea)}
-
 .error{color:red;text-align:center;font-size:13px;margin-bottom:12px}
-
 .total-amount{
   text-align:right;
   font-weight:600;
@@ -160,14 +143,12 @@ button.order-btn:hover{background:linear-gradient(135deg,#764ba2,#667eea)}
 <script>
 // ===== LOAD CART ITEMS =====
 let cart = JSON.parse(localStorage.getItem('cart')) || [];
-
 const cartContainer = document.getElementById('cartContainer');
 const totalAmountEl = document.getElementById('totalAmount');
 
 function renderCart(){
   cartContainer.innerHTML = '';
   let total = 0;
-
   cart.forEach((item,index)=>{
     const div = document.createElement('div');
     div.className = 'cart-item';
@@ -180,11 +161,9 @@ function renderCart(){
       <button onclick="removeItem(${index})">×</button>
     `;
     cartContainer.appendChild(div);
-
     let priceNum = parseInt(item.price.replace(/[^0-9]/g,''));
     total += priceNum;
   });
-
   totalAmountEl.innerText = total;
 }
 
@@ -203,17 +182,20 @@ const allowedSellers = [
   'seller3@gmail.com'
 ];
 
-const params = new URLSearchParams(window.location.search);
-const sellerEmail = params.get('seller');
+// ===== GET SELLER EMAIL =====
+let sellerEmail = new URLSearchParams(window.location.search).get('seller');
+if(!sellerEmail){
+  sellerEmail = localStorage.getItem('sellerEmail'); // fallback
+}
 
+// Check validity
 const errorBox = document.getElementById('error');
-
-if (!allowedSellers.includes(sellerEmail)) {
+if(!allowedSellers.includes(sellerEmail)){
   errorBox.innerText = 'Invalid seller link. Please contact seller.';
 }
 
 function sendOrder(){
-  if (!allowedSellers.includes(sellerEmail)) return;
+  if(!allowedSellers.includes(sellerEmail)) return;
 
   const name = document.getElementById('customerName').value.trim();
   const phone = document.getElementById('customerNumber').value.trim();
@@ -229,24 +211,40 @@ function sendOrder(){
     return;
   }
 
-  const itemsVal = cart.map(p=>`${p.title} - ${p.price}`).join("\n");
-  const amountVal = cart.reduce((sum,p)=>sum + parseInt(p.price.replace(/[^0-9]/g,'')),0);
+  // ===== GET CUSTOMER LOCATION =====
+  if(!navigator.geolocation){
+    alert('Please enable location to place your order.');
+    return;
+  }
 
-  const form = document.createElement('form');
-  form.action = `https://formsubmit.co/${sellerEmail}`;
-  form.method = 'POST';
+  navigator.geolocation.getCurrentPosition(function(position){
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
+    const mapLink = `https://www.google.com/maps?q=${lat},${lng}`;
 
-  form.innerHTML = `
-    <input type="hidden" name="Name" value="${name}">
-    <input type="hidden" name="Phone" value="${phone}">
-    <input type="hidden" name="Address" value="${address}">
-    <input type="hidden" name="Items" value="${itemsVal}">
-    <input type="hidden" name="Amount (PKR)" value="${amountVal}">
-    <input type="hidden" name="_captcha" value="false">
-  `;
+    const itemsVal = cart.map(p=>`${p.title} - ${p.price}`).join("\n");
+    const amountVal = cart.reduce((sum,p)=>sum + parseInt(p.price.replace(/[^0-9]/g,'')),0);
 
-  document.body.appendChild(form);
-  form.submit();
+    const form = document.createElement('form');
+    form.action = `https://formsubmit.co/${sellerEmail}`;
+    form.method = 'POST';
+
+    form.innerHTML = `
+      <input type="hidden" name="Name" value="${name}">
+      <input type="hidden" name="Phone" value="${phone}">
+      <input type="hidden" name="Address" value="${address}">
+      <input type="hidden" name="Items" value="${itemsVal}">
+      <input type="hidden" name="Amount (PKR)" value="${amountVal}">
+      <input type="hidden" name="📍 Customer Location" value="${mapLink}">
+      <input type="hidden" name="_captcha" value="false">
+    `;
+
+    document.body.appendChild(form);
+    form.submit();
+
+  }, function(){
+    alert('Please enable location to place your order.');
+  });
 }
 </script>
 
