@@ -346,5 +346,24 @@ addToCartButtons.forEach(btn=>{
 </script>
 
 
+
+<script>
+// Example: agar URL me ?seller=... hai
+const params = new URLSearchParams(window.location.search);
+const sellerEmail = params.get('seller');
+
+if(sellerEmail){
+    localStorage.setItem('sellerEmail', sellerEmail);
+}
+
+// Existing add to cart code rahega
+</script>
+
+
+
+
+  
+
 </body>
 </html>
+
